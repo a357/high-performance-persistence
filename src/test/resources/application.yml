@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    username: relationship
+    password: password
+    url: jdbc:mysql://127.0.0.1:3306/relationship?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
