@@ -1,4 +1,4 @@
-package com.jpahiber.demojpahiber.hibernate;
+package com.jpahiber.demojpahiber.hibernate.one2many;
 
 import com.jpahiber.demojpahiber.hibernate.utils.DbTest;
 import jakarta.persistence.*;

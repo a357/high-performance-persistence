@@ -1,4 +1,4 @@
-package com.jpahiber.demojpahiber.hibernate;
+package com.jpahiber.demojpahiber.hibernate.one2many;
 
 import com.jpahiber.demojpahiber.hibernate.utils.DbTest;
 import jakarta.persistence.*;
@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
-public class UnidirectionalOneToManyListJoinColumnNullableFalse extends DbTest {
+public class UnidirectionalOneToManyList extends DbTest {
 
     @Override
     protected void afterInit() {
@@ -36,20 +36,13 @@ public class UnidirectionalOneToManyListJoinColumnNullableFalse extends DbTest {
              persist customer
 
              Query:["insert into customer (name, id) values (?, ?)"], Params:[(John Doe, 1)]
-             Query:["insert into review (comment, id) values (?, ?)"], Params:[(Bad, 1)]
-             Query:["insert into review (comment, id) values (?, ?)"], Params:[(Good, 2)]
-             Query:["insert into review (comment, id) values (?, ?)"], Params:[(Ugly, 3)]
-             Query:["update review set c_id=? where id=?"], Params:[(1, 1)]
-             Query:["update review set c_id=? where id=?"], Params:[(1, 2)]
-             Query:["update review set c_id=? where id=?"], Params:[(1, 3)]
+             Query:["insert into review (comment, id) values (?, ?)"], Params:[(Bad, 1), (Good, 2), (Ugly, 3)]
+             Query:["insert into customer_review (Customer_id, reviews_id) values (?, ?)"], Params:[(1, 1), (1, 2), (1, 3)]
              */
 
             em.persist(customer);
         });
     }
-
-    @Test
-    public void save(){};
 
     @Test
     public void removeFirst(){
@@ -59,6 +52,7 @@ public class UnidirectionalOneToManyListJoinColumnNullableFalse extends DbTest {
             em.persist(customer);
         });
     }
+
 
     @Test
     public void removeLast(){
@@ -85,7 +79,6 @@ public class UnidirectionalOneToManyListJoinColumnNullableFalse extends DbTest {
         private String name;
 
         @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-        @JoinColumn(name = "c_id", nullable = false)
         private List<Review> reviews = new LinkedList<>();
     }
 

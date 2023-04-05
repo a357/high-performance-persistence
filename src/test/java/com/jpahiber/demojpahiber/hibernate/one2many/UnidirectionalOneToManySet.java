@@ -1,4 +1,4 @@
-package com.jpahiber.demojpahiber.hibernate;
+package com.jpahiber.demojpahiber.hibernate.one2many;
 
 import com.jpahiber.demojpahiber.hibernate.utils.DbTest;
 import jakarta.persistence.*;
@@ -7,11 +7,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
-public class UnidirectionalOneToManyList extends DbTest {
+public class UnidirectionalOneToManySet extends DbTest {
 
     @Override
     protected void afterInit() {
@@ -45,20 +44,10 @@ public class UnidirectionalOneToManyList extends DbTest {
     }
 
     @Test
-    public void removeFirst(){
+    public void remove(){
         doInJPA(em -> {
             Customer customer = em.find(Customer.class, 1L);
-            customer.getReviews().remove(0);
-            em.persist(customer);
-        });
-    }
-
-
-    @Test
-    public void removeLast(){
-        doInJPA(em -> {
-            Customer customer = em.find(Customer.class, 1L);
-            customer.getReviews().remove(customer.getReviews().size() - 1);
+            customer.getReviews().remove(customer.getReviews().iterator().next());
             em.persist(customer);
         });
     }
@@ -79,7 +68,7 @@ public class UnidirectionalOneToManyList extends DbTest {
         private String name;
 
         @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-        private List<Review> reviews = new LinkedList<>();
+        private Set<Review> reviews = new HashSet<>();
     }
 
     @Getter
