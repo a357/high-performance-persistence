@@ -1,4 +1,4 @@
-package com.jpahiber.demojpahiber.hibernate.utils;
+package com.jpahiber.demojpahiber.config.utils;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

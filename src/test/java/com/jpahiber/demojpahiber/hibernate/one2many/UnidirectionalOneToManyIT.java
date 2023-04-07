@@ -1,17 +1,19 @@
 package com.jpahiber.demojpahiber.hibernate.one2many;
 
-import com.jpahiber.demojpahiber.hibernate.utils.DbTest;
+import com.jpahiber.demojpahiber.config.utils.DbTest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 
 @Slf4j
-public class UnidirectionalOneToManyListOrder extends DbTest {
+public class UnidirectionalOneToManyIT extends DbTest {
 
     @Override
     protected void afterInit() {
@@ -45,26 +47,20 @@ public class UnidirectionalOneToManyListOrder extends DbTest {
     }
 
     @Test
-    public void removeFirst(){
-        doInJPA(em -> {
-            Customer customer = em.find(Customer.class, 1L);
-            customer.getReviews().remove(0);
-            em.persist(customer);
-        });
-    }
+    public void create(){}
 
-    @Test
-    public void removeLast(){
-        doInJPA(em -> {
-            Customer customer = em.find(Customer.class, 1L);
-            customer.getReviews().remove(customer.getReviews().size() - 1);
-            em.persist(customer);
-        });
-    }
+
 
     @Override
     protected Class<?>[] entities() {
         return new Class<?>[]{Customer.class, Review.class};
+    }
+
+    @Override
+    protected Optional<Properties> getCustomProperties() {
+        return Optional.of(new Properties() {{
+            setProperty("hibernate.jdbc.batch_size", "10");
+        }});
     }
 
     @Getter
@@ -78,8 +74,7 @@ public class UnidirectionalOneToManyListOrder extends DbTest {
         private String name;
 
         @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-        @OrderColumn(name = "r_index")
-        private List<Review> reviews = new LinkedList<>();
+        private List<Review> reviews = new ArrayList<>();
     }
 
     @Getter

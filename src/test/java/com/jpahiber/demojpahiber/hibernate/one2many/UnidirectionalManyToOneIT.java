@@ -1,15 +1,16 @@
 package com.jpahiber.demojpahiber.hibernate.one2many;
 
-import com.jpahiber.demojpahiber.hibernate.utils.DbTest;
+import com.jpahiber.demojpahiber.config.utils.DbTest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.util.Optional;
 import java.util.Properties;
 
 @Slf4j
-public class UnidirectionalManyToOne extends DbTest {
+public class UnidirectionalManyToOneIT extends DbTest {
 
     @Test
     public void saveReview() {
@@ -84,10 +85,10 @@ public class UnidirectionalManyToOne extends DbTest {
     }
 
     @Override
-    protected Properties getCustomProperties() {
-        return new Properties() {{
+    protected Optional<Properties> getCustomProperties() {
+        return Optional.of(new Properties() {{
             setProperty("hibernate.jdbc.batch_size", "3");
-        }};
+        }});
     }
 
     @Data

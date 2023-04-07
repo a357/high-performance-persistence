@@ -1,18 +1,16 @@
 package com.jpahiber.demojpahiber.hibernate.one2many;
 
-import com.jpahiber.demojpahiber.hibernate.utils.DbTest;
+import com.jpahiber.demojpahiber.config.utils.DbTest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @Slf4j
-public class UnidirectionalOneToMany extends DbTest {
+public class UnidirectionalOneToManySetIT extends DbTest {
 
     @Override
     protected void afterInit() {
@@ -46,20 +44,17 @@ public class UnidirectionalOneToMany extends DbTest {
     }
 
     @Test
-    public void create(){}
-
-
+    public void remove(){
+        doInJPA(em -> {
+            Customer customer = em.find(Customer.class, 1L);
+            customer.getReviews().remove(customer.getReviews().iterator().next());
+            em.persist(customer);
+        });
+    }
 
     @Override
     protected Class<?>[] entities() {
         return new Class<?>[]{Customer.class, Review.class};
-    }
-
-    @Override
-    protected Properties getCustomProperties() {
-        return new Properties() {{
-            setProperty("hibernate.jdbc.batch_size", "10");
-        }};
     }
 
     @Getter
@@ -73,7 +68,7 @@ public class UnidirectionalOneToMany extends DbTest {
         private String name;
 
         @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-        private List<Review> reviews = new ArrayList<>();
+        private Set<Review> reviews = new HashSet<>();
     }
 
     @Getter
