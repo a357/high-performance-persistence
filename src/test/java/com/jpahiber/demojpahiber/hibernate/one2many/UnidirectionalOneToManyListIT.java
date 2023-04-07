@@ -1,6 +1,6 @@
 package com.jpahiber.demojpahiber.hibernate.one2many;
 
-import com.jpahiber.demojpahiber.hibernate.utils.DbTest;
+import com.jpahiber.demojpahiber.config.utils.DbTest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
-public class UnidirectionalOneToManyList extends DbTest {
+public class UnidirectionalOneToManyListIT extends DbTest {
 
     @Override
     protected void afterInit() {

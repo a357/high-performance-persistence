@@ -1,6 +1,6 @@
 package com.jpahiber.demojpahiber.hibernate.one2many;
 
-import com.jpahiber.demojpahiber.hibernate.utils.DbTest;
+import com.jpahiber.demojpahiber.config.utils.DbTest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
-public class UnidirectionalOneToManyListJoinColumnNullableFalse extends DbTest {
+public class UnidirectionalOneToManyListJoinColumnIT extends DbTest {
 
     @Override
     protected void afterInit() {
@@ -85,7 +85,7 @@ public class UnidirectionalOneToManyListJoinColumnNullableFalse extends DbTest {
         private String name;
 
         @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-        @JoinColumn(name = "c_id", nullable = false)
+        @JoinColumn(name = "c_id")
         private List<Review> reviews = new LinkedList<>();
     }
 

@@ -1,17 +1,18 @@
-package com.jpahiber.demojpahiber.hibernate.utils;
+package com.jpahiber.demojpahiber.config.utils;
 
 import com.jpahiber.demojpahiber.config.enums.DataSourceProxyType;
+import com.jpahiber.demojpahiber.config.enums.Database;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -47,16 +48,17 @@ public abstract class DbTest {
 
     protected abstract Class<?>[] entities();
 
-    protected Properties getCustomProperties() {
-        return null;
+    protected Optional<Properties> getCustomProperties() {
+        return Optional.empty();
+    }
+
+    protected Database database() {
+        return Database.MYSQL;
     }
 
     private void startTransaction(Consumer<EntityManager> function) {
-        EntityManager entityManager = null;
         EntityTransaction txn = null;
-        try {
-
-            entityManager = sessionFactory.createEntityManager();
+        try (EntityManager entityManager = sessionFactory.createEntityManager()){
             txn = entityManager.getTransaction();
             txn.begin();
             function.accept(entityManager);
@@ -78,17 +80,11 @@ public abstract class DbTest {
                 }
             }
             throw t;
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
         }
     }
 
     private SessionFactory getSessionFactory() throws IOException {
         LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
-
-
         localSessionFactoryBean.setDataSource(buildDataSource());
         localSessionFactoryBean.setAnnotatedClasses(entities());
         localSessionFactoryBean.setHibernateProperties(getProps());
@@ -97,25 +93,21 @@ public abstract class DbTest {
     }
 
     private DataSource buildDataSource() {
-        DataSourceProxyType dspt = getDatasourceProxyType();
-        if (dspt == null) {
-            dspt = DataSourceProxyType.DATA_SOURCE_PROXY;
-        }
-
-        return dspt.dataSource(DataSourceBuilder.create()
-                .username("relationship")
-                .password("password")
-                .url("jdbc:mysql://127.0.0.1:3306/relationship?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC")
-                .build());
+        return Optional.ofNullable(getDatasourceProxyType())
+                .orElse(DataSourceProxyType.DATA_SOURCE_PROXY)
+                .dataSource(database().dataSourceProvider().dataSource());
     }
 
     private Properties getProps() {
         Properties properties = new Properties();
         properties.put("hibernate.hbm2ddl.auto", "create");
         properties.put("hibernate.connection.autocommit", true);
-        if (getCustomProperties() !=null && !getCustomProperties().isEmpty()){
-            properties.putAll(getCustomProperties());
-        }
+
+        database().dataSourceProvider().dataSourceProperties()
+                .ifPresent(properties::putAll);
+
+        getCustomProperties()
+                .ifPresent(properties::putAll);
 
         return properties;
     }
